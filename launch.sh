@@ -58,6 +58,13 @@ download_data() {
   fi
 }
 
+create_log_dir() {
+  LOG_DIR=./solr/logs/
+  if [ ! -d $LOG_DIR ]; then
+    make log
+  fi
+}
+
 # Solrのコレクション作成
 create_collection() {
     if [ `curl -LI "http://localhost:8983/solr/$1/admin/ping?distrib=true" -o /dev/null -w '%{http_code}\n' -s` -ne 200 ]; then

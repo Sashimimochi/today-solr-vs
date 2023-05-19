@@ -14,6 +14,9 @@ food:
 model:
 	mkdir -p $(MODEL_DIR)
 	wget http://www.cl.ecei.tohoku.ac.jp/~m-suzuki/jawiki_vector/data/20170201.tar.bz2 -O - | tar -jxvf - -C $(MODEL_DIR)
+log:
+	mkdir -p $(LOG_DIR)
+	sudo chmod 777 $(LOG_DIR)
 clean:
 	docker-compose down
 	rm -rf $(LCC_DIR)

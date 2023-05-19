@@ -2,7 +2,6 @@ version: "3"
 
 x-solr-service: &solr-service
   image: solr:9.1.1
-  #image: solr:9.2.1
   ports:
     - "8983:8983"
     - "9854:9854"
@@ -67,7 +66,6 @@ x-prometheus-service: &prometheus-service
   links:
     - solr_node1
     - docker-exporter
-    #- node-exporter
 
 x-grafana-service: &grafana-service
   image: grafana/grafana
@@ -126,6 +124,3 @@ services:
   docker-exporter:
     <<: *docker-exporter-service
     container_name: "docker-exporter"
-  #node-exporter:
-  #  <<: *node-exporter-service
-  #  container_name: "node-exporter"
