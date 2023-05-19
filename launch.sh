@@ -111,6 +111,7 @@ create_collections() {
 
 echo "[INFO] Data Download Type: ${dlType:=basic}"
 download_data
+create_log_dir
 docker-compose up -d
 echo "[INFO] Launch solr-exporter: ${solrExporter:=false}"
 echo "[INFO] Create collections: ${collections:=mini text_short}"
