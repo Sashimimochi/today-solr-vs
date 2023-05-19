@@ -1,0 +1,131 @@
+version: "3"
+
+x-solr-service: &solr-service
+  image: solr:9.1.1
+  #image: solr:9.2.1
+  ports:
+    - "8983:8983"
+    - "9854:9854"
+  volumes:
+    - "./solr/solr.in.sh:/etc/default/solr.in.sh"
+    - "./solr/conf/basic_conf:/opt/solr/server/solr/configsets/basic/conf"
+    - "./solr/conf/mini_conf:/opt/solr/server/solr/configsets/mini/conf"
+    - "./solr/conf/text_conf:/opt/solr/server/solr/configsets/text/conf"
+    - "./solr/conf/food_conf:/opt/solr/server/solr/configsets/food/conf"
+    - "./solr/conf/illust_conf:/opt/solr/server/solr/configsets/illust/conf"
+    - "./solr/conf/text_short_conf:/opt/solr/server/solr/configsets/text_short/conf"
+    - "./solr/conf/wiki_conf:/opt/solr/server/solr/configsets/wiki/conf"
+    - "./solr/conf/wiki_org_conf:/opt/solr/server/solr/configsets/wiki_org/conf"
+    - "./solr/conf/mini_dual_conf:/opt/solr/server/solr/configsets/mini_dual/conf"
+    - "./solr/conf/text_large_conf:/opt/solr/server/solr/configsets/text_large/conf"
+    - "./solr/logs:/var/solr/logs"
+  depends_on:
+    - zookeeper1
+
+x-zookeeper-service: &zookeeper-service
+  image: zookeeper:3.7
+  environment:
+    ZOO_MY_ID: 1
+    ZOO_SERVERS: server.1=zookeeper1:2888:3888;2181
+    ZOO_4LW_COMMANDS_WHITELIST: mntr,conf,ruok
+
+x-app-service: &app-service
+  build: ./python/
+  volumes:
+    - ./python:/workspace/app
+    - ./python/logs:/var/log/app
+  working_dir: /workspace/app
+  command: "streamlit run app.py --logger.level=info 2> streamlit_logs.log"
+  links:
+    - solr_node1
+    - zookeeper1
+    - mysql
+  ports:
+    - 8501:8501
+
+x-mysql-service: &mysql-service
+  image: mysql:5.7
+  command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+  environment:
+    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    - MYSQL_DATABASE=lcc
+    - MYSQL_USER=solrtutorial
+    - MYSQL_PASSWORD=solrtutorial
+  ports:
+    - "3306:3306"
+  volumes:
+    - "./mysql/data/:/data/"
+    - "./mysql/sql/:/docker-entrypoint-initdb.d/"
+    - "./mysql/conf.d:/etc/mysql/conf.d"
+
+x-prometheus-service: &prometheus-service
+  ports:
+    - 9090:9090
+  volumes:
+    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+  image: prom/prometheus
+  links:
+    - solr_node1
+    - docker-exporter
+    #- node-exporter
+
+x-grafana-service: &grafana-service
+  image: grafana/grafana
+  ports:
+    - 3000:3000
+  env_file:
+    - ./grafana/grafana.env
+  volumes:
+    - ./grafana/grafana.ini:/etc/grafana/grafana.ini
+    - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    - ./grafana/dashboards:/var/lib/grafana/dashboards
+  links:
+    - prometheus
+
+x-docker-exporter-service: &docker-exporter-service
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    - /dev/disk/:/dev/disk:ro
+  ports:
+    - 8080:8080
+  image: google/cadvisor:latest
+
+x-node-exporter-service: &node-exporter-service
+  image: quay.io/prometheus/node-exporter
+  container_name: node-exporter
+  ports:
+    - 9100:9100
+  volumes:
+    - /proc:/host/proc
+    - /sys:/host/sys
+    - /:/rootfs
+
+services:
+  solr_node1:
+    <<: *solr-service
+    container_name: solr_node1
+  zookeeper1:
+    <<: *zookeeper-service
+    container_name: zookeeper1
+  app:
+    <<: *app-service
+    container_name: app
+  mysql:
+    <<: *mysql-service
+    container_name: mysql
+  prometheus:
+    <<: *prometheus-service
+    container_name: prometheus
+  grafana:
+    <<: *grafana-service
+    container_name: grafana
+  docker-exporter:
+    <<: *docker-exporter-service
+    container_name: "docker-exporter"
+  #node-exporter:
+  #  <<: *node-exporter-service
+  #  container_name: "node-exporter"

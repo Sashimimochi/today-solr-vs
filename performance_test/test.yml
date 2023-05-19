@@ -1,0 +1,41 @@
+execution:
+  - concurrency: 100 # 同時接続数
+    ramp-up: 2s # ramp-up(concurrency数に到達するまでの)時間
+    hold-for: 10m # 試験時間
+    throughput: 30 # 最大スループット(RPS: Request per second)
+    scenario: solr-performance-base # シナリオ名
+
+scenarios:
+  solr-performance-base:
+    requests:
+      - url: http://host.docker.internal:8983/solr/wiki/select?q=*:*
+        method: POST
+  solr-performance-vector:
+    requests:
+      - url: http://host.docker.internal:8983/solr/wiki/select?${param}
+        method: POST
+    data-sources:
+      - path: ./query.log
+        delimiter: "\t"
+        quoted: true
+        encoding: "utf-8"
+        loop: true
+        variable-names: param
+        random-order: true
+  solr-performance-vector-single:
+    requests:
+      - url: http://host.docker.internal:8983/solr/wiki/select?${param}
+        method: POST
+    data-sources:
+      - path: ./query1.log
+        delimiter: "\t"
+        quoted: true
+        encoding: "utf-8"
+        loop: true
+        variable-names: param
+        random-order: true
+
+reporting:
+  - module: console # 実行中の情報を表示
+  - module: final-stats # サマリを表示
+  - module: blazemeter # オンラインレポートを作成
