@@ -95,7 +95,7 @@ class Indexer(SolrClient):
         col_info = COLLECTION.get(collection)
         result_type = col_info.get("result_type")
         model_name = col_info.get("embedding_model")
-        embed_dim = self.v.embedding_dim.get(model_name)
+        embed_dim = self.v.embedding_dim.get(model_name) if self.v.embedding_dim.get(model_name) else 4
         if collection == "wiki":
             return self.create_wiki_index(collection, filepath=filepath)
         elif result_type == "text" and embed_dim < 500:
@@ -327,7 +327,7 @@ class Indexer(SolrClient):
     def add(self, collection, data: list = None, filepath: str = None):
         max_index_size = COLLECTION.get(collection).get("max_index_size")
         model_name = COLLECTION.get(collection).get("embedding_model")
-        embed_dim = self.v.embedding_dim.get(model_name)
+        embed_dim = self.v.embedding_dim.get(model_name) if self.v.embedding_dim.get(model_name) else 4
         index_size = "large" if max_index_size > 100000 or embed_dim >= 500 else "small"
         try:
             if data:
