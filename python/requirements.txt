@@ -9,3 +9,8 @@ kazoo
 transformers
 fugashi
 ipadic
+plotly
+scikit-learn
+umap-learn
+matplotlib
+opentsne

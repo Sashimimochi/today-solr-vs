@@ -12,5 +12,5 @@
     <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0" />
     <fieldType name="plong" class="solr.LongPointField" docValues="true" />
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
-    <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="1024" similarityFunction="cosine" />
+    <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="2048" similarityFunction="cosine" />
 </schema>

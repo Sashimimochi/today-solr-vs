@@ -22,7 +22,32 @@ COLLECTION = {
     "food": {
         "result_type": "image",
         "embedding_model": "clip",
-        "max_index_size": 10000,
+        "max_index_size": 5000,
+    },
+    "food_002": {
+        "result_type": "image",
+        "embedding_model": "clip",
+        "max_index_size": 5000,
+    },
+    "food_128": {
+        "result_type": "image",
+        "embedding_model": "clip",
+        "max_index_size": 5000,
+    },
+    "food_256": {
+        "result_type": "image",
+        "embedding_model": "clip",
+        "max_index_size": 5000,
+    },
+    "food_400": {
+        "result_type": "image",
+        "embedding_model": "clip",
+        "max_index_size": 5000,
+    },
+    "food2": {
+        "result_type": "image",
+        "embedding_model": "clip",
+        "max_index_size": 5000,
     },
     "wiki": {
         "result_type": "text",
@@ -46,8 +71,8 @@ COLLECTION = {
     },
     "illust": {
         "result_type": "image",
-        "embedding_model": "densenet",
-        "max_index_size": 10000,
+        "embedding_model": "inception",
+        "max_index_size": 1,
     },
 }
 

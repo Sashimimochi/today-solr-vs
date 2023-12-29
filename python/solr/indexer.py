@@ -15,11 +15,11 @@ import pysolr
 from pysolr import SolrError
 from tqdm.auto import tqdm
 
-from mysql import MySQLClient
+from mysql.mysql import MySQLClient
 
 client = MySQLClient()
 
-from solr import SolrClient
+from solr.solr import SolrClient
 from config import *
 from utils import elapse_time
 from vectorizer.vectorizer import Vectorizer
@@ -95,7 +95,11 @@ class Indexer(SolrClient):
         col_info = COLLECTION.get(collection)
         result_type = col_info.get("result_type")
         model_name = col_info.get("embedding_model")
-        embed_dim = self.v.embedding_dim.get(model_name) if self.v.embedding_dim.get(model_name) else 4
+        embed_dim = (
+            self.v.embedding_dim.get(model_name)
+            if self.v.embedding_dim.get(model_name)
+            else 4
+        )
         if collection == "wiki":
             return self.create_wiki_index(collection, filepath=filepath)
         elif result_type == "text" and embed_dim < 500:
@@ -109,6 +113,9 @@ class Indexer(SolrClient):
 
     def create_text_index(self, collection, save: bool = True):
         rows = client.select()
+        max_index_size = COLLECTION.get(collection).get("max_index_size")
+        if max_index_size < len(rows):
+            rows = rows[:max_index_size]
         model = COLLECTION.get(collection).get("embedding_model")
         logging.info(f"vectorize {len(rows)} texts")
         data = [
@@ -145,6 +152,9 @@ class Indexer(SolrClient):
         )
         if len(filepaths) > max_index_size:
             filepaths = random.sample(filepaths, max_index_size)
+
+        logging.info(f"vectorize {len(filepaths)} images by {model}")
+
         data = [
             {
                 "id": i,
@@ -327,7 +337,11 @@ class Indexer(SolrClient):
     def add(self, collection, data: list = None, filepath: str = None):
         max_index_size = COLLECTION.get(collection).get("max_index_size")
         model_name = COLLECTION.get(collection).get("embedding_model")
-        embed_dim = self.v.embedding_dim.get(model_name) if self.v.embedding_dim.get(model_name) else 4
+        embed_dim = (
+            self.v.embedding_dim.get(model_name)
+            if self.v.embedding_dim.get(model_name)
+            else 4
+        )
         index_size = "large" if max_index_size > 100000 or embed_dim >= 500 else "small"
         try:
             if data:

@@ -1,18 +1,24 @@
 import torch
+import streamlit as st
 
 from transformers import BertJapaneseTokenizer, BertModel
 
 
 class Vectorizer:
     def __init__(self) -> None:
+        self.model, self.tokenizer, self.device = self.load_model()
+
+    @st.cache_resource
+    def load_model(_self):
         device = "cuda" if torch.cuda.is_available() else "cpu"
         model_name = "sonoisa/sentence-bert-base-ja-mean-tokens-v2"
-        self.model = BertModel.from_pretrained(model_name)
-        self.tokenizer = BertJapaneseTokenizer.from_pretrained(model_name)
-        self.model.eval()
+        model = BertModel.from_pretrained(model_name)
+        tokenizer = BertJapaneseTokenizer.from_pretrained(model_name)
+        model.eval()
 
-        self.device = torch.device(device)
-        self.model.to(device)
+        device = torch.device(device)
+        model.to(device)
+        return model, tokenizer, device
 
     def _mean_pooling(self, model_output, attention_mask):
         token_embeddings = model_output[
