@@ -6,8 +6,8 @@ usage() {
   cat <<EOM
 Usage: $(basename "$0") [OPTION]...
   -h          Display help
-  -c VALUE    Collection names wrapped by double quote mini/mini_dual/food/food2/illust/text/text_short/basic/wiki/wiki_org/text_large
-  -d VALUE    Dowload data type: mini/basic/food/food2/full
+  -c VALUE    Collection names wrapped by double quote mini/mini_dual/food/open_images/illust/text/text_short/basic/wiki/wiki_org/text_large
+  -d VALUE    Dowload data type: mini/basic/food/open_images/full
   -e VALUE    Launch solr-exporter
 EOM
 
@@ -35,19 +35,19 @@ done
 download_data() {
   # インデックスデータ/モデルデータのダウンロード
   FOOD_DIR="python/img/food/"
-  FOOD2_DIR="python/img/food2/"
+  OPEN_IMAGES_DIR="python/img/open_images/"
   WIKI_DIR="python/index/"
 
-  if [ "$dlType" = "full" -o "$dlType" = "food" -o "$dlType" = "wiki" -o "$dlType" = "food2" ]; then
-    if [ ! -d $FOOD_DIR -a "$dlType" != "wiki" -a "$dlType" != "food2" ]; then
+  if [ "$dlType" = "full" -o "$dlType" = "food" -o "$dlType" = "wiki" -o "$dlType" = "open_images" ]; then
+    if [ ! -d $FOOD_DIR -a "$dlType" != "wiki" -a "$dlType" != "open_images" ]; then
         make food
     else
         echo "[INFO] $FOOD_DIR is already existing. If you want to download again, please remove $FOOD_DIR"
     fi
-    if [ ! -d $FOOD2_DIR -a "$dlType" != "wiki" -a "$dlType" != "food" ]; then
-        make food2
+    if [ ! -d $OPEN_IMAGES_DIR -a "$dlType" != "wiki" -a "$dlType" != "food" ]; then
+        make open_images
     else
-        echo "[INFO] $FOOD2_DIR is already existing. If you want to download again, please remove $FOOD2_DIR"
+        echo "[INFO] $OPEN_IMAGES_DIR is already existing. If you want to download again, please remove $OPEN_IMAGES_DIR"
     fi
     if [ `find $WIKI_DIR -name "jamwiki-*-cirrussearch-content.json.gz" 2>&1 | wc -l` -eq 0 -a "$dlType" != "food" ]; then
         sh ./download_scripts/download_wiki.sh

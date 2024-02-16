@@ -10,5 +10,9 @@ python/index/*.gz
 python/index/*food*.json
 python/index/*illust*.json
 python/index/*text_short*.json
+python/index/*open_images*.json
 sample
 .vscode
+api/model
+api/query
+api/output

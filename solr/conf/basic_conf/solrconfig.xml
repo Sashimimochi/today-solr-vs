@@ -20,7 +20,7 @@
 <!-- a basic solrconfig that tests can use when they want simple minimal solrconfig/schema
      DO NOT ADD THINGS TO THIS CONFIG! -->
 <config>
-    <luceneMatchVersion>9.3.0</luceneMatchVersion>
+    <luceneMatchVersion>9.4.1</luceneMatchVersion>
   <dataDir>${solr.data.dir:}</dataDir>
   <schemaFactory class="ManagedIndexSchemaFactory">
     <bool name="mutable">true</bool>

@@ -44,7 +44,7 @@ COLLECTION = {
         "embedding_model": "clip",
         "max_index_size": 5000,
     },
-    "food2": {
+    "open_images": {
         "result_type": "image",
         "embedding_model": "clip",
         "max_index_size": 5000,

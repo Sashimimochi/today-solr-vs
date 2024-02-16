@@ -5,22 +5,23 @@ LOG_DIR=./solr/logs/
 MODEL_DIR=./python/model/
 PYCACHE_DIR=./python/__pycache__/
 FOOD_DIR=./python/img/food/
-FOOD_DIR2=./python/img/Food2/
+OPEN_IMAGES_DIR=./python/img/open_images
 DOWNLOAD_SCRIPTS=./download_scripts
 USERNAME=`whoami`
 
 tsv:
-	bash ./download_scripts/make_data.sh
+	bash ./$(DOWNLOAD_SCRIPTS)/make_data.sh
 food:
 	mkdir -p $(FOOD_DIR)
-	wget http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz -O - | tar xvz - -C $(FOOD_DIR)
-food2:
-	mkdir -p $(FOOD_DIR2)
+	wget http://data.vision.ee.ethz.ch/cvl/food-101.tar.gz -O /tmp/food-101.tar.gz
+	tar xvz /tmp/food-101.tar.gz -C $(FOOD_DIR)
+open_images:
+	mkdir -p $(OPEN_IMAGES_DIR)
 	docker build -t image_downloader ./download_scripts
 	docker run --rm -v `pwd`/$(DOWNLOAD_SCRIPTS):/workspace/app image_downloader python image_downloader.py
 	@echo "Change authrize from root to exec user"
 	sudo chown -R $(USERNAME).$(USERNAME) $(DOWNLOAD_SCRIPTS)
-	mv $(DOWNLOAD_SCRIPTS)/images/* $(FOOD_DIR2)
+	mv $(DOWNLOAD_SCRIPTS)/images/* $(OPEN_IMAGES_DIR)
 	rm -rf $(DOWNLOAD_SCRIPTS)/images
 	docker rmi image_downloader
 model:
@@ -40,4 +41,4 @@ clean:
 	@echo "Delete PYCACHE_DIR"
 	sudo rm -rf $(PYCACHE_DIR)
 	rm -rf $(FOOD_DIR)
-	rm -rf $(FOOD_DIR2)
+	rm -rf $(OPEN_IMAGES_DIR)
