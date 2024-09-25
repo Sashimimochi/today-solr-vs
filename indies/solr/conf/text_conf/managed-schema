@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="example" version="1.6">
+    <field name="_version_" type="plong" indexed="false" stored="false" />
+    <field name="_root_" type="int" indexed="true" stored="false" docValues="false" />
+
+    <uniqueKey>id</uniqueKey>
+
+    <field name="id" type="int" indexed="true" stored="true" required="true" />
+    <field name="media" type="pint" indexed="true" stored="false" docValues="true" />
+    <field name="url" type="string" indexed="false" stored="false" docValues="true" />
+    <field name="created_at" type="pdate" indexed="false" stored="false" docValues="true" /> 
+    <field name="title" type="string" indexed="true" stored="true" />
+    <field name="body" type="text_general" indexed="true" stored="true" />
+    <field name="vector" type="knn_vector" indexed="true" stored="false" />
+
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0" />
+    <fieldType name="pint" class="solr.IntPointField" docValues="true" />
+    <fieldType name="plong" class="solr.LongPointField" docValues="true" />
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" />
+    <fieldType name="pdate" class="solr.DatePointField" docValues="true" />
+    <fieldType name="knn_vector" class="solr.DenseVectorField" vectorDimension="512" similarityFunction="cosine" />
+</schema>
