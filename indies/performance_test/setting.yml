@@ -1,0 +1,8 @@
+modules:
+  jmeter:
+    version: 5.4.1
+    properties:
+      log_level.JMeter: WARN
+      log_level.JMeter.threads: WARN
+    system-properties:
+      org.apache.commons.logging.simplelog.log.org.apache.http: WARN
