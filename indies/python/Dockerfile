@@ -1,4 +1,4 @@
-FROM python:3.7
+FROM python:3.8
 
 # mecabの導入
 RUN apt-get -y update && \
