@@ -21,6 +21,8 @@ class Vectorizer:
     def text_vectorize(self, text):
         sum_vec = np.zeros(self.model.vector_size)
         word_count = 0
+        if not text:
+            return sum_vec
         node = self.mt.parseToNode(text)
         while node:
             fields = node.feature.split(',')
