@@ -2,12 +2,10 @@ import time
 import pysolr
 from pysolr import SolrError
 import PIL
-import numpy as np
 
 from config import *
 from solr.solr import Searcher
 from vectorizer.vectorizer import Vectorizer
-from reductor.reductor import Reductor
 
 
 class BasicSearcher(Searcher):
@@ -40,27 +38,26 @@ class VectorSearcher(Searcher):
     def __init__(self) -> None:
         super().__init__()
         self.v = Vectorizer()
-        self.r = Reductor()
 
-    def search(self, collection, query, reduct_model_name=None, reduct_dim=0):
+    def search(self, collection, query):
         if type(query.get("q")) == str:
-            return self._text_query(collection, query, reduct_model_name, reduct_dim)
+            return self._text_query(collection, query)
         elif type(query.get("q")) in [
             PIL.JpegImagePlugin.JpegImageFile,
             PIL.PngImagePlugin.PngImageFile,
         ]:
-            return self._img_query(collection, query, reduct_model_name, reduct_dim)
+            return self._img_query(collection, query)
         else:
-            return self._query(collection, None, reduct_model_name, reduct_dim)
+            return self._query(collection, None)
 
-    def _img_query(self, collection, query, reduct_model_name, reduct_dim):
+    def _img_query(self, collection, query):
         model = COLLECTION.get(collection).get("embedding_model")
         s_time = time.time()
         _vec = self.v.get_img_vector(model, query.get("q"))
         v_time = time.time() - s_time
-        return self._query(collection, _vec, reduct_model_name, reduct_dim), v_time
+        return self._query(collection, _vec), v_time
 
-    def _text_query(self, collection, query, reduct_model_name, reduct_dim):
+    def _text_query(self, collection, query):
         model = COLLECTION.get(collection).get("embedding_model")
         s_time = time.time()
         vec = self.v.get_text_vector(model, query.get("q"))
@@ -69,16 +66,10 @@ class VectorSearcher(Searcher):
             _vec = vec
         else:
             _vec = vec
-        return self._query(collection, _vec, reduct_model_name, reduct_dim), v_time
+        return self._query(collection, _vec), v_time
 
-    def _query(self, collection, vec, reduct_model_name, reduct_dim):
+    def _query(self, collection, vec):
         col_info = COLLECTION.get(collection)
-        if reduct_model_name:
-            if reduct_model_name == "TSNE":
-                vec = np.array([vec])
-                vec = self.r.reduct_vector(reduct_model_name, reduct_dim, vec)[0]
-            else:
-                vec = self.r.reduct_vector(reduct_model_name, reduct_dim, [vec])[0]
         if collection == "mini":
             q = "{!knn f=vector topK=10}[1.0, 2.0, 3.0, 4.0]"
             fl = "id"

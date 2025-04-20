@@ -58,23 +58,12 @@ def index_from_db(collection):
 
 
 def text_search(collection):
-    reductor = st.selectbox("select reductor", [None, "PCA", "TSNE", "UMAP"])
-    reduct_dim = st.number_input(
-        "input reducted dimension",
-        min_value=2,
-        max_value=1024,
-        value=256,
-        step=1,
-        help="input reduction model dimension that exists.",
-    )
     text = st.text_input(label="query keyword", placeholder="input query text here")
     if st.button(label=":mag: Search"):
         s_time = time.time()
         resp, v_time = searcher.search(
             collection,
             query={"q": text},
-            reduct_model_name=reductor,
-            reduct_dim=reduct_dim,
         )
         e_time = time.time()
         st.write(
