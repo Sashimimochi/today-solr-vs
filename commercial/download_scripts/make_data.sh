@@ -1,17 +1,5 @@
 #!/bin/bash
 
-function get_os() {
-    if [ "$(uname)" == 'Darwin' ]; then
-        export OS='Mac'
-    elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
-        export OS='Linux'
-    elif [ "$(expr substr $(uname -s) 1 10)" == 'MINGW32_NT' ]; then
-        export OS='Cygwin'
-    else
-        echo "Your platform ($(uname -a)) is not supported."
-        exit 1
-    fi
-}
 
 function lcc() {
     WORKSPACE=$(pwd)
@@ -38,11 +26,7 @@ function lcc() {
                     write_date=$(head -n 2 ${file} | tail -n 1)
                     title=$(head -n 3 ${file} | tail -n 1)
                     text=$(tail -n +4 ${file} | sed -e s/　//g | tr -d '\n')
-                    if [ ${OS} == "Mac" ]; then
-                        echo "$media\t$url\t$write_date\t$title\t$text" >> ${O_DIR}/${O_FILE}
-                    else
-                        echo -e "$media\t$url\t$write_date\t$title\t$text" >> ${O_DIR}/${O_FILE}
-                    fi
+                    echo -e "$media\t$url\t$write_date\t$title\t$text" >> ${O_DIR}/${O_FILE}
                 fi
             done
             echo "[$i/9] end $media"
@@ -114,8 +98,6 @@ function kwdlc() {
     fi
 }
 
-get_os
-echo "[INFO] OS: ${OS}"
 lcc
 sleep 10
 knbc

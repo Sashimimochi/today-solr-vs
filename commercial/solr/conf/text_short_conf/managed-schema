@@ -5,15 +5,15 @@
 
     <uniqueKey>id</uniqueKey>
 
-    <field name="id" type="int" indexed="true" stored="true" required="true" />
-    <field name="media" type="pint" indexed="true" stored="false" docValues="true" />
+    <field name="id" type="int" indexed="true" stored="false" required="true" />
+    <field name="media" type="pint" indexed="true" stored="false" />
     <field name="url" type="string" indexed="false" stored="false" docValues="true" />
-    <field name="created_at" type="pdate" indexed="false" stored="false" docValues="true" /> 
-    <field name="title" type="string" indexed="true" stored="true" />
+    <field name="created_at" type="pdate" indexed="false" stored="false" />
+    <field name="title" type="string" indexed="true" stored="false" />
     <field name="body" type="text_general" indexed="true" stored="true" />
-    <field name="vector" type="knn_vector" indexed="true" stored="false" />
+    <field name="vector" type="knn_vector" indexed="true" stored="false" docValues="false" />
 
-    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0" />
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0" docValues="true" />
     <fieldType name="pint" class="solr.IntPointField" docValues="true" />
     <fieldType name="plong" class="solr.LongPointField" docValues="true" />
     <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true" />

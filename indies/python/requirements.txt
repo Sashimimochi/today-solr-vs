@@ -58,7 +58,7 @@ sentencepiece==0.1.94
 six==1.17.0
 smart-open==7.1.0
 smmap==5.0.2
-streamlit==1.23.1
+streamlit==1.25.0
 tenacity==8.2.3
 timm==0.9.12
 tokenizers==0.10.3
